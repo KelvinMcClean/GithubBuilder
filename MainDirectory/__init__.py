@@ -1,4 +1,4 @@
-from MainDirectory.Test import *
+from GithubBuilder.MainDirectory.Test import *
 import sqlite3
 from sqlite3 import Error
 import requests
@@ -32,19 +32,24 @@ def main():
     print("Load up file for results...")
     print(db_loc)
 
-    conn = create_connection(database)
-    response = requests.get('https://api.github.com/search/repositories?q=stars%3A%3E0&sort=stars&per_page=100')
+    #conn = create_connection(database)
+    #response = requests.get('https://api.github.com/search/repositories?q=stars%3A%3E0&sort=stars')
 
-    print('Number of projects: {0}'.format(response.json()['total_count']))
-    if conn is not None:
-        create_table(conn,sql_create_projects_table)
-        create_table(conn,sql_create_tasks_table)
+    #print('Number of projects: {0}'.format(response.json()['total_count']))
+
+    response = requests.get('https://api.github.com/users/reergymerej')
+    print('Number of repos: {0}'.format(response.json()['public_repos']))
+    person = response.json()['login']
+    response = requests.get('https://api.github.com/users/{0}/repos' .format(person))
+    print(response.json()[0]['id'])
+    """if conn is not None:
+        create_table(conn, sql_create_users_table)
 
         conn.close()
 
     else:
         print("Error! Cannot create database Connection")
-
+"""
     print("See where to start...")
 
     print("Load command to go to GH and get data")
@@ -52,6 +57,7 @@ def main():
     print("Count API calls")
 
     print("Process call and data received. Process.")
+
 
 if __name__ == "__main__":
     main()

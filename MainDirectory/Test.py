@@ -1,11 +1,16 @@
 
 database = "D:/Experiment/Data.db"
+
 db_loc = "Database location: " + database
-sql_create_projects_table = """ CREATE TABLE IF NOT EXISTS projects (
+sql_create_users_table = """ CREATE TABLE IF NOT EXISTS users (
                                        id integer PRIMARY KEY,
-                                       name text NOT NULL,
-                                       begin_date text,
-                                       end_date text
+                                       username text NOT NULL,
+                                       year_created integer,
+                                       hireable integer,
+                                       public_repos integer,
+                                       followers integer,
+                                       following integer,
+                                       location text
                                    ); """
 
 sql_create_tasks_table = """CREATE TABLE IF NOT EXISTS tasks (
@@ -18,4 +23,5 @@ sql_create_tasks_table = """CREATE TABLE IF NOT EXISTS tasks (
                                     end_date text NOT NULL,
                                     FOREIGN KEY (project_id) REFERENCES projects (id)
                                 );"""
+
 
