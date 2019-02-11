@@ -13,10 +13,10 @@ f.close()
 sql_create_users_table = """ CREATE TABLE IF NOT EXISTS users (
                                        id integer PRIMARY KEY,
                                        username text NOT NULL,
+                                       type text,
                                        year_created integer,
                                        hireable integer,
                                        public_repos integer,
-                                       owned_repos integer,
                                        followers integer,
                                        following integer,
                                        location text,

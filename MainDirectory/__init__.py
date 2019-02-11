@@ -31,7 +31,7 @@ def create_table(conn, create_table_sql):
 def insert_into_people(conn, person):
     try:
         sql = '''INSERT INTO users 
-                    (username, year_created, hireable, public_repos, owned_repos, followers, following, github_id) 
+                    (username, type, year_created, hireable, public_repos, followers, following, github_id) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
         c = conn.cursor()
         c.execute(sql, person)
@@ -65,40 +65,54 @@ def main():
         create_table(conn, sql_create_users_table)
         create_table(conn, sql_create_projects_table)
 
-        response = requests.get('https://api.github.com/users/reergymerej', auth=(key_user, key_auth))
+        response = requests.get('https://api.github.com/users/auth0', auth=(key_user, key_auth))
         username = response.json()['login']
+
+        type_of_org = response.json()['type']
+
         year_created = response.json()['created_at'][:4]
         hireable = "0"
         if response.json()['hireable']:
             hireable = "1"
         public_repos = str(response.json()['public_repos'])
-
         followers = str(response.json()['followers'])
         following = str(response.json()['following'])
         github_id = str(response.json()['id'])
-        repos_list = requests.get('https://api.github.com/users/{0}/repos'.format(username), auth=(key_user, key_auth))
-        owned_repos = len(repos_list.json())
 
-        person = (username, year_created, hireable, public_repos, owned_repos, followers, following, github_id)
+        person = (username, type_of_org, year_created, hireable, public_repos, followers, following, github_id)
 
         person_id = insert_into_people(conn, person)
-        print(person_id)
 
-        for i in range(len(repos_list.json())):
-            repo = repos_list.json()[i]
-            url = repo['url']
-            project_data = requests.get(url, auth=(key_user, key_auth))
-            name = project_data.json()['name']
-            stargazer_count = project_data.json()['stargazers_count']
-            watchers_count = project_data.json()['watchers_count']
-            forks_count = project_data.json()['forks']
-            year_created = project_data.json()['created_at'][:4]
-            year_updated = project_data.json()['updated_at'][:4]
-            programming_language = project_data.json()['language']
-            github_id = project_data.json()['id']
-            project = (person_id,name, stargazer_count, watchers_count, forks_count, year_created, year_updated,
-                       programming_language, github_id)
-            insert_into_projects(conn, project)
+        page = 0
+
+        num_repos = response.json()['public_repos']
+
+        print(person_id)
+        while (page * 30) < num_repos:
+            page = page + 1
+
+            repos_list = requests.get('https://api.github.com/users/{0}/repos?page={1}'.format(username, page),
+                                      auth=(key_user, key_auth))
+
+            for i in range(len(repos_list.json())):
+                repo = repos_list.json()[i]
+                url = repo['url']
+                project_data = requests.get(url, auth=(key_user, key_auth))
+                is_fork = project_data.json()['fork']
+                if not is_fork:
+
+                    name = project_data.json()['name']
+                    stargazer_count = project_data.json()['stargazers_count']
+                    watchers_count = project_data.json()['watchers_count']
+                    forks_count = project_data.json()['forks']
+                    year_created = project_data.json()['created_at'][:4]
+                    year_updated = project_data.json()['updated_at'][:4]
+                    programming_language = project_data.json()['language']
+                    github_id = project_data.json()['id']
+                    project = (person_id, name, stargazer_count, watchers_count, forks_count, year_created, year_updated,
+                               programming_language, github_id)
+                    insert_into_projects(conn, project)
+
 
         conn.close()
     """print('Number of projects: {0}'.format(response.json()['total_count']))
