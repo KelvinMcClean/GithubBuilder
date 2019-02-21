@@ -1,4 +1,4 @@
-from GithubBuilder.MainDirectory.Test import *
+from GithubBuilder.MainDirectory.DatabaseInfo import *
 import sqlite3
 from sqlite3 import Error
 import requests
@@ -65,7 +65,7 @@ def main():
         create_table(conn, sql_create_users_table)
         create_table(conn, sql_create_projects_table)
 
-        response = requests.get('https://api.github.com/users/auth0', auth=(key_user, key_auth))
+        response = requests.get('https://api.github.com/users/reergymerej', auth=(key_user, key_auth))
         username = response.json()['login']
 
         type_of_org = response.json()['type']
