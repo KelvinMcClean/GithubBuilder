@@ -1,10 +1,10 @@
 class User:
 
-    def __init__(self, p_id, name, age, p_type, member_of, hirable, spaces, projects, stars, collaborators,
+    def __init__(self, p_id, name, year_created, p_type, member_of, hirable, spaces, projects, stars, collaborators,
                  followers, following):
         self.p_id = p_id
         self.name = name
-        self.age = age
+        self.year_created = year_created
         self.type = p_type
         self.member_of = member_of
         self.hirable = hirable
@@ -14,3 +14,4 @@ class User:
         self.collaborators = collaborators
         self.followers = followers
         self.following = following
+

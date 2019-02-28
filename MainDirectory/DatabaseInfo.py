@@ -10,6 +10,22 @@ f.close()
 f = open(user_loc, "r")
 key_user = f.read()
 f.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 sql_create_users_table = """ CREATE TABLE IF NOT EXISTS users (
                                        id integer PRIMARY KEY,
                                        username text NOT NULL,
