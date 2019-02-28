@@ -1,7 +1,7 @@
 class Dates:
 
-    def __init__(self, p_id, name, LOC, churn, contributor_count, commits, contributors):
-        self.p_id = p_id
+    def __init__(self, ghtorrent_id, name, LOC, churn, contributor_count, commits, contributors):
+        self.ghtorrent_id = ghtorrent_id
         self.name = name
         self.LOC = LOC
         self.churn = churn

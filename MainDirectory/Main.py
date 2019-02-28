@@ -1,10 +1,6 @@
-from MainDirectory.DatabaseInfo import *
 from MainDirectory.GetData import *
 from MainDirectory.PushData import *
-from Database import *
 
-import requests
-import pymongo
 
 
 

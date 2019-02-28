@@ -1,12 +1,13 @@
 class User:
 
-    def __init__(self, p_id, name, year_created, p_type, member_of, hirable, spaces, projects, stars, collaborators,
+    def __init__(self, ghtorrent_id, login, date_created, p_type, orgs, company, hirable, spaces, projects, stars, collaborators,
                  followers, following):
-        self.p_id = p_id
-        self.name = name
-        self.year_created = year_created
+        self.ghtorrent_id = ghtorrent_id
+        self.login = login
+        self.date_created = date_created
         self.type = p_type
-        self.member_of = member_of
+        self.orgs = orgs
+        self.company = company
         self.hirable = hirable
         self.spaces = spaces
         self.projects = projects

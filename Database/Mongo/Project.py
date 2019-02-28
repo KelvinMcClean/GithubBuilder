@@ -1,7 +1,7 @@
 class Project:
 
-    def __init__(self, p_id, name, owner, space, size, LOC, contributor_count, contributors, dates, issues, year):
-        self.p_id = p_id
+    def __init__(self, ghtorrent_id, name, owner, space, size, LOC, contributor_count, contributors, dates, issues, year):
+        self.ghtorrent_id = ghtorrent_id
         self.name = name
         self.owner = owner
         self.space = space

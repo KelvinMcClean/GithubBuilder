@@ -1,7 +1,7 @@
 class Issue:
 
-    def __init__(self, p_id, name, resolved, contributors, opened_time, closed_time):
-        self.p_id = p_id
+    def __init__(self, ghtorrent_id, name, resolved, contributors, opened_time, closed_time):
+        self.ghtorrent_id = ghtorrent_id
         self.name = name
         self.resolved = resolved
         self.contributors = contributors

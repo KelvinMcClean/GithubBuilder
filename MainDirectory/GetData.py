@@ -6,7 +6,7 @@ import requests
 def get_person(person):
 
     response = requests.get('https://api.github.com/users/{0}'.format(person), auth=(key_user, key_auth))
-    username = response.json()['login']
+    login = response.json()['login']
 
     type_of_org = response.json()['type']
 
@@ -18,9 +18,9 @@ def get_person(person):
     followers = response.json()['followers']
     following = response.json()['following']
     github_id = response.json()['id']
-
-    a_person = User(github_id, username, year_created, type_of_org, 0, hireable, 0, public_repos, 0, 0,
-                    followers, following)
+    ghtorrent_id = 0
+    a_person = User(github_id, login, year_created, type_of_org, 0, hireable, 0, public_repos, 0, 0,
+                    followers, following, ghtorrent_id)
     return a_person
 
 
@@ -54,3 +54,6 @@ def get_person_projects(person, page):
             project = Project(id, name, owner, space, size, LOC, contributor_count, contributors, dates, issues, year)
             project_id = insert_into_projects_list(vars(project))
 
+
+def get_followers():
+    pass
