@@ -1,18 +1,17 @@
 class User:
 
-    def __init__(self, ghtorrent_id, login, date_created, p_type, orgs, company, hirable, spaces, projects, stars, collaborators,
-                 followers, following):
-        self.ghtorrent_id = ghtorrent_id        #GHT
-        self.login = login                      #GHT
-        self.date_created = date_created        #GHT
-        self.type = p_type                      #GHT
-        self.orgs = orgs                        #GHT
-        self.company = company                  #GHT
-        self.hirable = hirable                  #Mongo
-        self.spaces = spaces                    #Code
-        self.projects = projects                #GHT
-        self.stars = stars                      #GHT
-        self.collaborators = collaborators      #GHT/ Code
-        self.followers = followers              #GHT
-        self.following = following              #GHT
+    def __init__(self, user_info):
+        self.ghtorrent_id = user_info['ght']
+        self.login = user_info['login']                       # GHT
+        self.date_created = user_info['date_created']         # GHT
+        self.type = user_info['type']                       # GHT
+        self.orgs = user_info['orgs']                         # GHT
+        self.company = user_info['company']                   # GHT
+        self.hirable = user_info['hirable']                   # Mongo
+        self.spaces = user_info['spaces']                     # Code
+        self.projects = user_info['projects']                 # GHT
+        self.stars = user_info['stars']                       # GHT
+        self.collaborators = user_info['collaborators']       # GHT/ Code
+        self.followers = user_info['followers']               # GHT
+        self.following = user_info['following']               # GHT
 

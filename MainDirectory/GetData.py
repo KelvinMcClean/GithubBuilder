@@ -2,25 +2,39 @@ from MainDirectory.DatabaseInfo import *
 from Database import *
 from MainDirectory.PushData import insert_into_projects_list
 import requests
+from Database.GHTorrent.Connection import *
+
 
 def get_person(person):
 
-    response = requests.get('https://api.github.com/users/{0}'.format(person), auth=(key_user, key_auth))
-    login = response.json()['login']
 
-    type_of_org = response.json()['type']
+    # a_person = User(github_id, login, year_created, type_of_org, 0, hireable, 0, public_repos, 0, 0,
+    #                 followers, following, ghtorrent_id)
 
-    year_created = int(response.json()['created_at'][:4])
-    hireable = 0
-    if response.json()['hireable']:
-        hireable = 1
-    public_repos = response.json()['public_repos']
-    followers = response.json()['followers']
-    following = response.json()['following']
-    github_id = response.json()['id']
-    ghtorrent_id = 0
-    a_person = User(github_id, login, year_created, type_of_org, 0, hireable, 0, public_repos, 0, 0,
-                    followers, following, ghtorrent_id)
+    response = get_ghtorrent_user(person)
+    response_person = {}
+    response_person['login'] = response[1]
+
+    response_person['type'] = response[4]
+
+    response_person['date_created'] = response[3]
+    response_person['hirable'] = 0
+    # if response.json()['hireable']:
+    #     hireable = 1
+    response_person['projects'] = 0
+    response_person['followers'] = 0
+    response_person['following'] = 0
+    response_person['orgs'] = 0
+    response_person['ght'] = response[0]
+    response_person['company'] = response[2]
+    response_person['spaces'] = 0
+    response_person['stars'] = 0
+    response_person['collaborators'] = 0
+    response_person['fake'] = response[5]
+    response_person['deleted'] = response[6]
+    response_person['country'] = response[7]
+
+    a_person = User(response_person)
     return a_person
 
 
@@ -30,7 +44,6 @@ def get_person_projects(person, page):
 
     for i in range(len(repos_list.json())):
         repo = repos_list.json()[i]
-        url = repo['url']
         is_fork = repo['fork']
         if not is_fork:
             id = repo['id']
@@ -43,16 +56,10 @@ def get_person_projects(person, page):
             contributors = 0
             dates = 0
             issues = 0
-            stargazer_count = repo['stargazers_count']
-            watchers_count = repo['watchers_count']
-            forks_count = repo['forks']
             year = int(repo['created_at'][:4])
-            year_updated = int(repo['updated_at'][:4])
-            programming_language = repo['language']
-            github_id = repo['id']
 
             project = Project(id, name, owner, space, size, LOC, contributor_count, contributors, dates, issues, year)
-            project_id = insert_into_projects_list(vars(project))
+            insert_into_projects_list(vars(project))
 
 
 def get_followers():
