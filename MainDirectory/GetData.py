@@ -12,7 +12,7 @@ def get_person(person):
     #                 followers, following, ghtorrent_id)
 
     response = get_ghtorrent_user(person)
-    response_person = {}
+    response_person = dict()
     response_person['login'] = response[1]
 
     response_person['type'] = response[4]
@@ -38,28 +38,30 @@ def get_person(person):
     return a_person
 
 
-def get_person_projects(person, page):
-    repos_list = requests.get('https://api.github.com/users/{0}/repos?page={1}'.format(person, page),
-                              auth=(key_user, key_auth))
+def get_person_projects(ght_id):
 
-    for i in range(len(repos_list.json())):
-        repo = repos_list.json()[i]
-        is_fork = repo['fork']
-        if not is_fork:
-            id = repo['id']
-            name = repo['name']
-            owner = repo['owner']['id']
-            space = 0
-            size = repo['size']
-            LOC = 0
-            contributor_count = 0
-            contributors = 0
-            dates = 0
-            issues = 0
-            year = int(repo['created_at'][:4])
+    response = get_ghtorrent_user_projects(ght_id)
 
-            project = Project(id, name, owner, space, size, LOC, contributor_count, contributors, dates, issues, year)
-            insert_into_projects_list(vars(project))
+    if response == 0:
+        return
+
+    for item in response:
+        response_project = dict()
+        response_project['id'] = item[0]
+        response_project['name'] = item[2]
+        response_project['owner'] = ght_id
+        response_project['space'] = 0
+        response_project['size'] = 0
+        response_project['LOC'] = 0
+        response_project['contributor_count'] = 0
+        response_project['contributors'] = 0
+        response_project['dates'] = 0
+        response_project['issues'] = 0
+        response_project['year'] = item[4]
+        response_project['deleted'] = item[6]
+
+        project = Project(response_project)
+        insert_into_projects_list(vars(project))
 
 
 def get_followers():

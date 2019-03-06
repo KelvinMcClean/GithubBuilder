@@ -12,16 +12,9 @@ def main():
     username = 'reergymerej'
     person = get_person(username)
 
-    person_id = insert_into_people_list(vars(person))
-
-    page = 0
-
-    num_repos = int(person.projects)
-
-    print(person_id)
-    while (page * 30) < num_repos:
-        page = page + 1
-        get_person_projects(username, page)
+    insert_into_people_list(vars(person))
+    ght_id = person.ghtorrent_id
+    get_person_projects(ght_id)
 
     insert_into_people()
     insert_into_projects()

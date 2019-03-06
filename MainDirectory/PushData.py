@@ -19,12 +19,40 @@ def insert_into_projects_list(project):
     projects.append(project)
     return projects.index(project)
 
+
 def insert_into_people():
-    users_collection.insert_many(people)
-    people.clear()
+    if len(people) == 0:
+        return
+
+    elif "Users" in db.list_collection_names():
+        users_collection.insert_many(people)
+        people.clear()
+
+    else:
+        if len(people) > 2:
+            users_collection.insert_one(people.pop())
+            users_collection.insert_many(people)
+            people.clear()
+
+        elif len(people) == 1:
+            users_collection.insert_one(people.pop())
 
 
 def insert_into_projects():
-    projects_collection.insert_many(projects)
-    projects.clear()
+    if len(projects) == 0:
+        return
+
+    elif "Projects" in db.list_collection_names():
+        projects_collection.insert_many(projects)
+        projects.clear()
+
+    else:
+        if len(projects) > 1:
+            projects_collection.insert_one(projects.pop())
+            projects_collection.insert_many(projects)
+            projects.clear()
+
+        elif len(projects) == 1:
+            projects_collection.insert_one(projects.pop())
+
 
