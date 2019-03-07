@@ -1,10 +1,6 @@
 from MainDirectory.GetData import *
 from MainDirectory.PushData import *
 
-
-
-
-
 def main():
     print("Load up file for results...")
     print(db_loc)

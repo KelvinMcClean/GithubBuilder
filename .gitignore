@@ -2,12 +2,5 @@ MainDirectory/__pycache__
 .scannerwork/.sonar_lock
 .scannerwork/report-task.txt
 sonar-project.properties
-Database/__pycache__/__init__.cpython-37.pyc
-Database/GHTorrent/__pycache__/Connection.cpython-37.pyc
-Database/Mongo/__pycache__/__init__.cpython-37.pyc
-Database/Mongo/__pycache__/Date.cpython-37.pyc
-Database/Mongo/__pycache__/Issue.cpython-37.pyc
-Database/Mongo/__pycache__/Project.cpython-37.pyc
-Database/Mongo/__pycache__/Space.cpython-37.pyc
-Database/Mongo/__pycache__/User.cpython-37.pyc
 venv1/*
+*.pyc
