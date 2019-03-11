@@ -1,8 +1,10 @@
-from MainDirectory.DatabaseInfo import *
 from Database import *
 from MainDirectory.PushData import insert_into_projects_list
-import requests
 from Database.GHTorrent.Connection import *
+from MainDirectory.PushData import projects
+from MainDirectory.PushData import people
+import datetime
+import Analysis.PullGitData as pgd
 
 
 def get_person(person):
@@ -51,11 +53,9 @@ def get_person_projects(ght_id):
         response_project['name'] = item[2]
         response_project['owner'] = ght_id
         response_project['space'] = 0
-        response_project['size'] = 0
-        response_project['LOC'] = 0
         response_project['contributor_count'] = 0
         response_project['contributors'] = 0
-        response_project['dates'] = 0
+        response_project['dates'] = list()
         response_project['issues'] = 0
         response_project['year'] = item[4]
         response_project['deleted'] = item[6]
@@ -66,3 +66,42 @@ def get_person_projects(ght_id):
 
 def get_followers():
     pass
+
+
+def analyse_projects(dates):
+    for project in projects:
+        deleted = project['deleted']
+        if not deleted:
+            p_name = project['name']
+            p_owner = project['owner']
+            owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
+            pgd.clone_project(owner, p_name)
+
+    for date in dates:
+        date_value = datetime.datetime.strptime(date, '%Y-%m-%d')
+        for project in projects:
+            deleted = project['deleted']
+            if not deleted:
+                p_name = project['name']
+                p_owner = project['owner']
+                owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
+                date_created = project['created_on']
+
+                if date_created < date_value:
+                    pgd.get_project_on_date(owner, p_name, date)
+                    pgd.examine_project(owner, p_name, date)
+                    metrics = pgd.get_metrics(owner, p_name)
+                    metrics['date'] = date
+                    project['dates'].append(metrics)
+
+        for project in projects:
+            deleted = project['deleted']
+            if not deleted:
+                p_name = project['name']
+                p_owner = project['owner']
+                owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
+
+                metrics = pgd.get_metrics(owner, p_name)
+                metrics['date'] = date
+                project['dates'].append(metrics)
+

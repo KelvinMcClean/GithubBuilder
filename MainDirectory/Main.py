@@ -1,10 +1,10 @@
 from MainDirectory.GetData import *
 from MainDirectory.PushData import *
+from Analysis.PullGitData import reset_wd
+
 
 def main():
-    print("Load up file for results...")
-    print(db_loc)
-
+    reset_wd()
     username = 'reergymerej'
     person = get_person(username)
 
@@ -12,6 +12,12 @@ def main():
     ght_id = person.ghtorrent_id
     get_person_projects(ght_id)
 
+    this_file_path = os.path.dirname(os.path.realpath(__file__))
+    file_path = this_file_path+"/../Analysis/dates"
+    with open(file_path) as fp:
+        dates = fp.readlines()
+    dates = [x[:-1] for x in dates]
+    analyse_projects(dates)
     insert_into_people()
     insert_into_projects()
     """

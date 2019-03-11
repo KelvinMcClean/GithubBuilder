@@ -1,8 +1,7 @@
 import subprocess as s
 import os
-import Learning.FileInfo
+import Analysis.FileInfo
 import requests
-import time
 
 print(s.check_output("dir D:", shell=True))
 wd = "D:/repos"
@@ -22,7 +21,7 @@ print(output)
 cmd = "git checkout {0}".format(output)
 s.call(cmd, shell=True)
 
-text = Learning.FileInfo.get_file_text(owner, proj, "2019-02-06")
+text = Analysis.FileInfo.get_file_text(owner, proj, "2019-02-06")
 print(text)
 f = open("sonar-project.properties", "w+")
 f.write(text)
