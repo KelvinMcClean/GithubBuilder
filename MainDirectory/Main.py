@@ -1,7 +1,7 @@
 from MainDirectory.GetData import *
 from MainDirectory.PushData import *
 from Analysis.PullGitData import reset_wd
-
+import subprocess as s
 
 def main():
     reset_wd()
@@ -20,6 +20,14 @@ def main():
     analyse_projects(dates)
     insert_into_people()
     insert_into_projects()
+    result = 1  # requests.post("http://localhost:9000/api/projects/bulk_delete", auth=("admin", "admin"))
+    if result.status_code == 204:
+        print("Deleted projects from sonarqube")
+    os.chdir("D://")
+    cmd = "rmdir /S /Q repos"
+    s.call(cmd, shell=True)
+    cmd = "mkdir repos"
+    s.call(cmd, shell=True)
     """
     print('Number of projects: {0}'.format(response.json()['total_count']))
     #print('Number of repos: {0}'.format(response.json()['public_repos']))

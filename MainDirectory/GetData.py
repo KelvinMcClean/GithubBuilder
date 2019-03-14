@@ -5,6 +5,8 @@ from MainDirectory.PushData import projects
 from MainDirectory.PushData import people
 import datetime
 import Analysis.PullGitData as pgd
+import requests
+from MainDirectory.DatabaseInfo import *
 
 
 def get_person(person):
@@ -75,7 +77,11 @@ def analyse_projects(dates):
             p_name = project['name']
             p_owner = project['owner']
             owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
-            pgd.clone_project(owner, p_name)
+            if requests.get("https://api.github.com/repos/{0}/{1}".format(owner, p_name),
+                            auth=(key_user, key_auth)).status_code == 200:
+                pgd.clone_project(owner, p_name)
+            else:
+                project['deleted'] = True
 
     for date in dates:
         date_value = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -90,9 +96,6 @@ def analyse_projects(dates):
                 if date_created < date_value:
                     pgd.get_project_on_date(owner, p_name, date)
                     pgd.examine_project(owner, p_name, date)
-                    metrics = pgd.get_metrics(owner, p_name)
-                    metrics['date'] = date
-                    project['dates'].append(metrics)
 
         for project in projects:
             deleted = project['deleted']
@@ -100,8 +103,9 @@ def analyse_projects(dates):
                 p_name = project['name']
                 p_owner = project['owner']
                 owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
+                metrics = -1
+                while metrics == -1:
+                    metrics = pgd.get_metrics(owner, p_name)
 
-                metrics = pgd.get_metrics(owner, p_name)
                 metrics['date'] = date
                 project['dates'].append(metrics)
-

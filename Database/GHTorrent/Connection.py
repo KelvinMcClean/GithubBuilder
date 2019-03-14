@@ -30,7 +30,7 @@ def get_ghtorrent_user_projects_from_login(login):
     response = cur.execute("SELECT p.id, p.url, p.name, p.language, p.created_at, p.updated_at, p.deleted "
                            "FROM projects as p "
                            "INNER JOIN users ON users.id=p.owner_id "
-                           "WHERE users.login='{0}' AND p.forked_from IS NULL;".format(login))
+                           "WHERE users.login='{0}' AND p.forked_from IS NULL LIMIT 10;".format(login))
     if response == 0:
         return response
     else:
@@ -39,7 +39,8 @@ def get_ghtorrent_user_projects_from_login(login):
 
 def get_ghtorrent_user_projects(ghtorrent_id):
     query = "SELECT p.id, p.url, p.name, p.language, p.created_at, p.updated_at, p.deleted " \
-            "FROM projects as p WHERE p.owner_id='{0}' AND p.forked_from IS NULL;".format(ghtorrent_id)
+            "FROM projects as p WHERE p.owner_id='{0}' AND p.forked_from IS NULL LIMIT 10;".format(ghtorrent_id)
+    print(query)
     response = cur.execute(query)
     if response == 0:
         return response

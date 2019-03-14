@@ -2,6 +2,7 @@ import subprocess as s
 import os
 import Analysis.FileInfo
 import requests
+import time
 
 wd = "D:/repos"
 
@@ -14,7 +15,7 @@ def reset_wd():
 
 def clone_project(owner, project):
     reset_wd()
-    cmd = "git clone https://www.github.com/{0}/{1} {0}/{1}".format(owner, project)
+    cmd = "git clone https://github.com/{0}/{1}.git/ {0}/{1}".format(owner, project)
     s.call(cmd, shell=True)
 
 
@@ -37,7 +38,7 @@ def examine_project(owner, project, date):
     f.close()
 
     cmd = "sonar-scanner"
-    s.call(cmd, shell=True)
+    s.call(cmd, shell=True, stdout=s.DEVNULL)
 
 
 def get_metrics(owner, project):
@@ -45,11 +46,15 @@ def get_metrics(owner, project):
     result = requests.get("http://localhost:9000/api/measures/component", params=payload)
     data = result.json()
     data_dict = dict()
+    if result.status_code != 200 or len(data['component']['measures']) == 0:
+        return -1
     for json_var in data['component']['measures']:
         if json_var['metric'] == 'ncloc':
             data_dict["ncloc"] = json_var['value']
         elif json_var['metric'] == 'complexity':
-            data_dict["complexity"] = 'complexity'
+            data_dict["complexity"] = json_var['value']
+        else:
+            return -1
     return data_dict
 
 
