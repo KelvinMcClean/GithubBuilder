@@ -17,6 +17,12 @@ def get_ghtorrent_user(login):
     return cur.fetchone()
 
 
+def get_ghtorrent_user_by_ghtid(ght_id):
+    cur.execute(" SELECT id, login, company, created_at, "
+                " type, fake, deleted, country_code "
+                " FROM users WHERE id='{0}'".format(ght_id))
+    return cur.fetchone()
+
 def get_ghtorrent_user_orgs(ghtorrent_id):
     response = cur.execute("SELECT org_id, created_at from organization_members WHERE user_id='{0}'"
                            .format(ghtorrent_id))
@@ -39,8 +45,17 @@ def get_ghtorrent_user_projects_from_login(login):
 
 def get_ghtorrent_user_projects(ghtorrent_id):
     query = "SELECT p.id, p.url, p.name, p.language, p.created_at, p.updated_at, p.deleted " \
-            "FROM projects as p WHERE p.owner_id='{0}' AND p.forked_from IS NULL LIMIT 10;".format(ghtorrent_id)
-    print(query)
+            "FROM projects as p WHERE p.owner_id='{0}' AND p.forked_from IS NULL;".format(ghtorrent_id)
+    response = cur.execute(query)
+    if response == 0:
+        return response
+    else:
+        return cur.fetchall()
+
+def get_ghtorrent_user_orgs(ghtorrent_id):
+    query = "SELECT org_id, users.login, o.created_at FROM organization_members as o " \
+            "INNER JOIN users ON org_id=users.id " \
+            "WHERE user_id ='{0}'".format(ghtorrent_id)
     response = cur.execute(query)
     if response == 0:
         return response

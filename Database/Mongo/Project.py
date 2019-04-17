@@ -11,3 +11,5 @@ class Project:
         self.issues = project_info['issues']                            #
         self.created_on = project_info['year']                          #GHT
         self.deleted = project_info['deleted']                         #GHT
+        self.analysed = False
+        self.quality_analysed = False

@@ -9,32 +9,19 @@ import requests
 from MainDirectory.DatabaseInfo import *
 
 
-def get_person(person):
+def get_person(ght_id):
 
 
     # a_person = User(github_id, login, year_created, type_of_org, 0, hireable, 0, public_repos, 0, 0,
     #                 followers, following, ghtorrent_id)
 
-    response = get_ghtorrent_user(person)
+    response = get_ghtorrent_user_by_ghtid(ght_id)
     response_person = dict()
-    response_person['login'] = response[1]
-
-    response_person['type'] = response[4]
-
-    response_person['date_created'] = response[3]
-    response_person['hirable'] = 0
-    # if response.json()['hireable']:
-    #     hireable = 1
-    response_person['projects'] = 0
-    response_person['followers'] = 0
-    response_person['following'] = 0
-    response_person['orgs'] = 0
     response_person['ght'] = response[0]
+    response_person['login'] = response[1]
+    response_person['date_created'] = response[3]
+    response_person['type'] = response[4]
     response_person['company'] = response[2]
-    response_person['spaces'] = 0
-    response_person['stars'] = 0
-    response_person['collaborators'] = 0
-    response_person['fake'] = response[5]
     response_person['deleted'] = response[6]
     response_person['country'] = response[7]
 
