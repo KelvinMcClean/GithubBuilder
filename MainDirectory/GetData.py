@@ -96,3 +96,4 @@ def analyse_projects(dates):
 
                 metrics['date'] = date
                 project['dates'].append(metrics)
+

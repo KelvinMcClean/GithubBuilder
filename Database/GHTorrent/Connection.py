@@ -61,3 +61,14 @@ def get_ghtorrent_user_orgs(ghtorrent_id):
         return response
     else:
         return cur.fetchall()
+
+def get_ghtorrent_user_org_members(ghtorrent_id):
+    query = "SELECT o.user_id, users.login, o.created_at FROM organization_members as o " \
+            "INNER JOIN users ON org_id=users.id " \
+            "WHERE o.org_id ='{0}'".format(ghtorrent_id)
+    response = cur.execute(query)
+    if response == 0:
+        return response
+    else:
+        return cur.fetchall()
+
