@@ -31,7 +31,7 @@ def get_commit_info(ght_id):
     else:
         return commits
 
-
+# Try to fix tomorrow. Looking for a query that'll allow me to just SELECT the latest status for that issue.
 def get_issue_info(ght_id):
     result = -1
     issues = list()

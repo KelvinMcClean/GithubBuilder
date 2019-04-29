@@ -9,7 +9,8 @@ def main():
 
     for x in doc:
         ght_id = x['ghtorrent_id']
-
+        owner = x['owner']
+        name = x['name']
         # Pull project commit info
         # Pull project commit comments
         # Add information onto users
@@ -32,10 +33,10 @@ def main():
         # Pull project issue comments
         # Add information onto users
 
-        issues = get_issue_info(ght_id)
+        issues = get_issue_info(owner, name)
         if len(issues) > 0:
             for issue in issues:
-                comments = get_issue_comments(issue['id'])
+                comments = get_issue_comments(owner, name, issue['number'])
 
 
 

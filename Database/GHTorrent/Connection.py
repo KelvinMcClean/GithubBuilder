@@ -1,5 +1,7 @@
 import MySQLdb
 import os
+import pymongo
+
 path = os.path.dirname(__file__)
 db_host_loc = os.path.join(path, "connection_config")
 f = open(db_host_loc, "r")
@@ -8,6 +10,11 @@ f.close()
 
 db = MySQLdb.connect(host, user="ght", db="ghtorrent")
 cur = db.cursor()
+
+
+foreign_client = pymongo.MongoClient("mongodb://localhost:27015/")
+foreign_db = foreign_client['github']
+foreign_issues = foreign_db["issues"]
 
 
 def get_ghtorrent_user(login):
@@ -117,13 +124,13 @@ def get_ghtorrent_project_pull_requests(ghtorrent_id, start_limit, number):
         return cur.fetchall()
 
 
-def get_ghtorrent_project_issues(ghtorrent_id, start_limit, number):
-    query = "SELECT * FROM issues WHERE repo_id = '{0}' LIMIT {1}, {2};".format(ghtorrent_id, start_limit, number);
-    response = cur.execute(query)
-    if response == 0:
+def get_ghtorrent_project_issues(owner, repo_name):
+    query = {'owner': owner, 'repo': repo_name, 'created_at': {'$exists': True}}
+
+    response = list(foreign_issues.find(query))
+    if len(response) > 0:
         return response
-    else:
-        return cur.fetchall()
+    return 0
 
 
 def get_ghtorrent_commit_comments(ghtorrent_id):
