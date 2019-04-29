@@ -151,3 +151,30 @@ def get_ghtorrent_issue_comments(ghtorrent_id):
         return response
     else:
         return cur.fetchall()
+
+
+def get_ghtorrent_user_followers(ghtorrent_id, loop, number):
+    query = "SELECT follower_id, followers.created_at FROM followers INNER JOIN users ON user_id = users.id " \
+            "WHERE users.id = {0} LIMIT {1}, {2};".format(ghtorrent_id, loop, number)
+    response = cur.execute(query)
+    if response == 0:
+        return response
+    return cur.fetchall()
+
+
+def get_ghtorrent_user_following(ghtorrent_id, loop, number):
+    query = "SELECT user_id, followers.created_at FROM followers INNER JOIN users ON follower_id = users.id " \
+            "WHERE users.id = {0} LIMIT {1}, {2};".format(ghtorrent_id, loop, number)
+    response = cur.execute(query)
+    if response == 0:
+        return response
+    return cur.fetchall()
+
+
+def get_ghtorrent_user_stars(ghtorrent_id, loop, number):
+    query = "SELECT repo_id, watchers.created_at FROM watchers INNER JOIN users ON users.id = watchers.user_id " \
+            "WHERE users.id = {0} LIMIT {1}, {2};".format(ghtorrent_id, loop, number)
+    response = cur.execute(query)
+    if response == 0:
+        return response
+    return cur.fetchall()

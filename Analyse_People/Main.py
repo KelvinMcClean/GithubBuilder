@@ -43,6 +43,21 @@ def main():
                     person = create_person_from_search(mem)
                     list_of_new_people_to_add.append(person)
 
+        # for everyone
+        followers = get_person_followers(ght_id)
+        following = get_person_following(ght_id)
+        stars = get_person_stars(ght_id)
+
+        if followers != 0:
+            x['followers'] = followers
+
+        if following != 0:
+            x['following'] = following
+
+        if stars != 0:
+            x['stars'] = stars
+
+
         list_of_elements.append(x)
 
     insert_into_projects()

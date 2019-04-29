@@ -41,24 +41,27 @@ def checkprojdb(ght_id):
     else:
         return 0
 
+
 def check_person_list(ght_id):
     return ght_id in people_ids
 
+
 def check_proj_list(ght_id):
     return ght_id in project_ids
+
 
 def get_projects_by_member(ght_id):
     result = -1
     membership_list = list()
     loop = 0
     while result!=0:
-        result=get_ghtorrent_projects_by_member(ght_id, loop, 100)
+        result=get_ghtorrent_projects_by_member(ght_id, loop, 1000)
         if result != 0:
-            loop = loop + 100
+            loop = loop + 1000
             for project in result:
                 membership_list.append(project)
 
-    if len(membership_list == 0):
+    if len(membership_list) == 0:
         return 0
     else:
         return membership_list
@@ -69,13 +72,60 @@ def get_projects_committed_to(ght_id):
     committed_list = list()
     loop = 0
     while result != 0:
-        result = get_ghtorrent_projects_by_comments(ght_id, loop, 100)
+        result = get_ghtorrent_projects_by_comments(ght_id, loop, 1000)
         if result != 0:
-            loop = loop + 100
+            loop = loop + 1000
             for project in result:
                 committed_list.append(project)
 
-    if len(committed_list == 0):
+    if len(committed_list) == 0:
         return 0
     else:
         return committed_list
+
+
+def get_person_followers(ght_id):
+    result = -1
+    followers_list = list()
+    loop = 0
+    while result != 0:
+        result = get_ghtorrent_user_followers(ght_id, loop, 1000)
+        if result !=0:
+            loop = loop + 1000
+            for person in result:
+                followers_list.append(person)
+    if len(followers_list) == 0:
+        return 0
+    else:
+        return followers_list
+
+def get_person_following(ght_id):
+    result = -1
+    following_list = list()
+    loop = 0
+    while result != 0:
+        result = get_ghtorrent_user_following(ght_id, loop, 1000)
+        if result != 0:
+            loop = loop + 1000
+            for person in result:
+                following_list.append(person)
+    if len(following_list) == 0:
+        return 0
+    else:
+        return following_list
+
+
+def get_person_stars(ght_id):
+    result = -1
+    stars_list = list()
+    loop = 0
+    while result != 0:
+        result = get_ghtorrent_user_stars(ght_id, loop, 1000)
+        if result != 0:
+            loop = loop + 1000
+            for star in result:
+                stars_list.append(star)
+    if len(stars_list) == 0:
+        return 0
+    else:
+        return stars_list
