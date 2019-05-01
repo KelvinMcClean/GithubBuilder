@@ -23,15 +23,13 @@ def get_commit_info(ght_id):
         result = get_ghtorrent_project_commits(ght_id, loop, 100)
         if result != 0:
             loop = loop + 100
-            for commit in result:
-                commits.append(commit)
+            commits.extend(result)
 
     if len(commits == 0):
         return 0
     else:
         return commits
 
-# Try to fix tomorrow. Looking for a query that'll allow me to just SELECT the latest status for that issue.
 def get_issue_info(ght_id):
     result = -1
     issues = list()
@@ -41,7 +39,8 @@ def get_issue_info(ght_id):
         if result != 0:
             loop = loop + 100
             for issue in result:
-                issues.append(issue)
+                issue['closed_at'] = get_ghtorrent_issue_closed_on(issue['id'])
+            issues.extend(result)
 
     if len(issues == 0):
         return 0
@@ -57,8 +56,7 @@ def get_pull_request_info(ght_id):
         result = get_ghtorrent_project_pull_requests(ght_id, loop, 100)
         if result != 0:
             loop = loop + 100
-            for request in result:
-                pull_requests.append(request)
+            pull_requests.extend(result)
 
     if len(pull_requests == 0):
         return 0
@@ -74,8 +72,7 @@ def get_commit_comments(ght_id):
         result = get_ghtorrent_commit_comments(ght_id, loop, 100)
         if result != 0:
             loop = loop + 100
-            for comment in result:
-                comments.append(comment)
+            comments.extend(result)
 
     if len(comments == 0):
         return 0
@@ -91,8 +88,7 @@ def get_issue_comments(ght_id):
         result = get_ghtorrent_issue_comments(ght_id, loop, 100)
         if result != 0:
             loop = loop + 100
-            for issue in result:
-                issues.append(issue)
+            issues.extend(result)
 
     if len(issues == 0):
         return 0
@@ -108,8 +104,7 @@ def get_pull_request_comments(ght_id):
         result = get_ghtorrent_pull_request_comments(ght_id, loop, 100)
         if result != 0:
             loop = loop + 100
-            for request in result:
-                pull_requests.append(request)
+            pull_requests.extend(result)
 
     if len(pull_requests == 0):
         return 0

@@ -115,6 +115,22 @@ def get_ghtorrent_project_commits(ghtorrent_id, start_limit, number):
         return cur.fetchall()
 
 
+def get_ghtorrent_issue_closed_on(ghtorrent_id):
+    query = "SELECT * FROM issue_events WHERE issue_id = {0} ORDER BY created_at DESC;".format(ghtorrent_id)
+    response = cur.execute(query)
+    if response == 0:
+        return response
+    else:
+        row = cur.fetchone()
+        date = None
+        while date is None and row is not None:
+            if row['action'] == 'closed':
+                date = row['created_at']
+            else:
+                row = cur.fetchone()
+        return date
+
+
 def get_ghtorrent_project_pull_requests(ghtorrent_id, start_limit, number):
     query = "SELECT * FROM pull_requests WHERE head_repo_id = '{0}' LIMIT {1}, {2};".format(ghtorrent_id, start_limit, number);
     response = cur.execute(query)
