@@ -17,6 +17,26 @@ foreign_db = foreign_client['github']
 foreign_issues = foreign_db["issues"]
 
 
+def get_ghtorrent_distinct_pr_commentators(ghtorrent_id):
+    query = "SELECT DISTINCT user_id FROM pull_request_comments WHERE pull_request_id = {0}".format(ghtorrent_id)
+    cur.execute(query)
+    rows = cur.fetchall()
+    return [x[0] for x in rows]
+
+
+def get_ghtorrent_distinct_issue_commentators(ghtorrent_id):
+    query = "SELECT DISTINCT user_id FROM issue_comments WHERE issue_id = {0}".format(ghtorrent_id)
+    cur.execute(query)
+    rows = cur.fetchall()
+    return [x[0] for x in rows]
+
+
+def get_ghtorrent_distinct_commit_commentators(ghtorrent_id):
+    query = "SELECT DISTINCT user_id FROM commit_comments WHERE commit_id = {0}".format(ghtorrent_id)
+    cur.execute(query)
+    rows = cur.fetchall()
+    return [x[0] for x in rows]
+
 def get_ghtorrent_user(login):
     cur.execute(" SELECT id, login, company, created_at, "
                 " type, fake, deleted, country_code "

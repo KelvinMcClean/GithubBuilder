@@ -2,7 +2,7 @@ from MainDirectory.GetData import *
 import subprocess as s
 
 
-def main():
+def quality():
     this_file_path = os.path.dirname(os.path.realpath(__file__))
     file_path = this_file_path + "/../Analysis/dates"
     with open(file_path) as fp:

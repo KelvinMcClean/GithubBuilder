@@ -1,10 +1,12 @@
 from Analyse_People.Get_People_Data import get_user_by_id
 from Analyse_People.Collaborators import *
+from Analyse_Projects.Get_Project_Data import *
+from Analysis.Timestamp import *
 dates = dict()
 
 
 def get_date_from_time(timestamp, ght_id):
-    corrected_timestamp = timestamp
+    corrected_timestamp = get_corrected_timestamp(timestamp)
     date = None
     if corrected_timestamp in dates.keys():
         date = dates[corrected_timestamp]
@@ -25,11 +27,18 @@ def get_date_from_time(timestamp, ght_id):
 def put_commits_in_dates(commits, project):
     ght_id = project['ghtorrent_id']
     for commit in commits:
-        date = get_date_from_time(commit['created_at'], ght_id)
+        date = get_date_from_time(commit[5], ght_id)
         date['commits'] = date['commits'] + 1
 
-        user = get_user_by_id(commit['committer_id'])
-        author = get_user_by_id(commit['author_id'])
+        ids = get_distinct_commit_commentators(commit[0])
+        commentators = [get_user_by_id(u_id) for u_id in ids]
+        for i in range(0, len(commentators)):
+            for j in range(0, len(commentators)):
+                if i != j:
+                    add_connection(commentators[i], commentators[j], date)
+
+        user = get_user_by_id(commit[3])
+        author = get_user_by_id(commit[2])
         add_connection(user, author, date)
         if "projects" not in user.keys():
             user['projects'] = dict()
@@ -47,12 +56,6 @@ def put_commits_in_dates(commits, project):
             user['projects'][ght_id] = project_to_add
 
 
-def put_pull_requests_in_dates(pull_requests, project):
-    ght_id = project['ghtorrent_id']
-    for pull_request in pull_requests:
-        date = get_date_from_time(pull_request['created_at'], ght_id)
-        date['pull_requests'] = date['pull_requests'] + 1
-
 
 def put_issues_in_dates(issues, project):
     ght_id = project['ghtorrent_id']
@@ -60,6 +63,14 @@ def put_issues_in_dates(issues, project):
     for issue in issues:
         date = get_date_from_time(issue['created_at'], ght_id)
         date['issues'] = date['issues'] + 1
+
+        ids = get_distinct_issue_commentators(issue['id'])
+        commentators = [get_user_by_id(u_id) for u_id in ids]
+        for i in range(0, len(commentators)):
+            for j in range(0, len(commentators)):
+                if i != j:
+                    add_connection(commentators[i], commentators[j], date)
+
         if issue['closed_at'] is not None:
             date_closed = get_date_from_time(issue['closed_at'], ght_id)
             date_closed['issues_resolved'] = date_closed['issues_resolved'] + 1

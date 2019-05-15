@@ -17,7 +17,6 @@ def update_collaboration(person_a, person_b):
         print("Error in pymongo update")
 
 
-
 def get_unanalysed_people():
     query = {"analysed": False}
     doc = user_col.find(query)

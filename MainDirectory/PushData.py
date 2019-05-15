@@ -13,6 +13,7 @@ users_collection = db["Users"]
 projects_collection = db["Projects"]
 dates_collection = db["Dates"]
 
+
 def insert_into_dates(dates):
     if len(dates) == 0:
         return
