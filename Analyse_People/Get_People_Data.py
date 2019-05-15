@@ -5,18 +5,27 @@ from MainDirectory.PushData import *
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["github_builder_db"]
-mycol = mydb["Users"]
+user_col = mydb["Users"]
 proj_col = mydb["Projects"]
+
+
+def update_collaboration(person_a, person_b):
+    try:
+        user_col.update_one({'_id':person_a['_id']},{'$set': {'collaborators':person_a['collaborators']}})
+        user_col.update_one({'_id':person_b['_id']},{'$set': {'collaborators':person_b['collaborators']}})
+    except:
+        print("Error in pymongo update")
+
 
 
 def get_unanalysed_people():
     query = {"analysed": False}
-    doc = mycol.find(query)
+    doc = user_col.find(query)
     return doc
 
 
 def get_all_people():
-    doc = mycol.find()
+    doc = user_col.find()
     return doc
 
 
@@ -29,7 +38,7 @@ def get_org_members(user):
 
 
 def checkdb(ght_id):
-    if mycol.find_one({"ghtorrent_id": ght_id}) is not None:
+    if user_col.find_one({"ghtorrent_id": ght_id}) is not None:
         return 1
     else:
         return 0
@@ -40,6 +49,10 @@ def checkprojdb(ght_id):
         return 1
     else:
         return 0
+
+
+def get_user_by_id(ght_id):
+    return user_col.find_one({"ghtorrent_id": ght_id})
 
 
 def check_person_list(ght_id):

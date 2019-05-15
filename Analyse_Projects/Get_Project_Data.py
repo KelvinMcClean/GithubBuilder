@@ -2,7 +2,6 @@ import pymongo
 from Database.GHTorrent.Connection import *
 from MainDirectory.PushData import *
 
-
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["github_builder_db"]
 mycol = mydb["Users"]
@@ -13,6 +12,10 @@ def get_unanalysed_projects():
     query = {"analysed": False}
     doc = proj_col.find(query)
     return doc
+
+
+def handle_user_exists(user_id, ght_id):
+    pass
 
 
 def get_commit_info(ght_id):
