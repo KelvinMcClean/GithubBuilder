@@ -144,8 +144,8 @@ def get_ghtorrent_issue_closed_on(ghtorrent_id):
         row = cur.fetchone()
         date = None
         while date is None and row is not None:
-            if row['action'] == 'closed':
-                date = row['created_at']
+            if row[3] == 'closed':
+                date = row[5]
             else:
                 row = cur.fetchone()
         return date
@@ -160,17 +160,18 @@ def get_ghtorrent_project_pull_requests(ghtorrent_id, start_limit, number):
         return cur.fetchall()
 
 
-def get_ghtorrent_project_issues(owner, repo_name):
-    query = {'owner': owner, 'repo': repo_name, 'created_at': {'$exists': True}}
 
-    response = list(foreign_issues.find(query))
-    if len(response) > 0:
+def get_ghtorrent_project_issues(ghtorrent_id):
+    query = "SELECT * FROM issues WHERE repo_id = {0}".format(ghtorrent_id)
+    response = cur.execute(query)
+    if response == 0:
         return response
-    return 0
+    else:
+        return cur.fetchall()
 
 
 def get_ghtorrent_commit_comments(ghtorrent_id):
-    query = "SELECT * FROM commit_commets WHERE commit_id='{0}';".format(ghtorrent_id)
+    query = "SELECT * FROM commit_comments WHERE commit_id='{0}';".format(ghtorrent_id)
     response = cur.execute(query)
     if response == 0:
         return response

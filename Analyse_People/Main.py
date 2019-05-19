@@ -63,14 +63,14 @@ def main():
     insert_into_projects()
 
     for usr in list_of_new_people_to_add:
-        if not checkdb(usr[0]) and not check_person_list(usr[0]):
-            person = get_person(usr[0])
+        if not checkdb(usr.ghtorrent_id) and not check_person_list(usr.ghtorrent_id):
+            person = get_person(usr.ghtorrent_id)
 
             insert_into_people_list(vars(person))
 
     for prj in list_of_projects_to_add:
-        if not checkprojdb(prj['id']) and not check_proj_list(prj['id']):
-            insert_into_projects_list(project)
+        if not checkprojdb(prj.ghtorrent_id) and not check_proj_list(prj.ghtorrent_id):
+            insert_into_projects_list(vars(prj))
 
     insert_into_people()
     insert_into_projects()

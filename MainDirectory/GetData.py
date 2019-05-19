@@ -1,12 +1,10 @@
 from Database import *
-from MainDirectory.PushData import insert_into_projects_list
-from Database.GHTorrent.Connection import *
-from MainDirectory.PushData import projects
+from Analyse_Projects.Get_Project_Data import *
 from MainDirectory.PushData import people
-import datetime
 import Analysis.PullGitData as pgd
 import requests
 from MainDirectory.DatabaseInfo import *
+import pandas as pd
 
 
 def get_person(ght_id):
@@ -57,44 +55,76 @@ def get_followers():
     pass
 
 
-def analyse_projects(dates):
-    for project in projects:
+def analyse_projects(projects_to_analyse, dates):
+    for project in projects_to_analyse:
         deleted = project['deleted']
         if not deleted:
             p_name = project['name']
             p_owner = project['owner']
-            owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
-            if requests.get("https://api.github.com/repos/{0}/{1}".format(owner, p_name),
+            owner = user_col.find_one({'ghtorrent_id':p_owner})
+            owner_login = owner['login']
+            if requests.get("https://api.github.com/repos/{0}/{1}".format(owner_login, p_name),
                             auth=(key_user, key_auth)).status_code == 200:
-                pgd.clone_project(owner, p_name)
+                pgd.clone_project(owner_login, p_name)
             else:
                 project['deleted'] = True
 
     for date in dates:
-        date_value = datetime.datetime.strptime(date, '%Y-%m-%d')
-        for project in projects:
+        date_value = pd.to_datetime(date)
+        for project in projects_to_analyse:
+            print("1")
             deleted = project['deleted']
             if not deleted:
                 p_name = project['name']
                 p_owner = project['owner']
-                owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
+                p_id = project['ghtorrent_id']
+                owner_oop = user_col.find_one({'ghtorrent_id': p_owner})
+                owner = owner_oop['login']
                 date_created = project['created_on']
 
                 if date_created < date_value:
+                    print("tester")
                     pgd.get_project_on_date(owner, p_name, date)
                     pgd.examine_project(owner, p_name, date)
+                    metrics = -1
+                    loop = 0
+                    while metrics == -1 and loop < 10:
+                        loop += 1
+                        metrics = pgd.get_metrics(owner, p_name)
 
-        for project in projects:
-            deleted = project['deleted']
-            if not deleted:
-                p_name = project['name']
-                p_owner = project['owner']
-                owner = min(elem['login'] for elem in people if elem['ghtorrent_id'] == p_owner)
-                metrics = -1
-                while metrics == -1:
-                    metrics = pgd.get_metrics(owner, p_name)
+                    if loop <= 10:
+                        date_key = "gh{0}ts{1}".format(p_id, date_value)  # Get date key
+                        if date_key_exists(date_key):
+                            date_to_update = get_date_from_key(date_key)
+                            update_date(date_to_update, metrics)
 
-                metrics['date'] = date
-                project['dates'].append(metrics)
+                        else:
+                            date_to_update = dict()
+                            date_to_update['metrics'] = metrics
+                            insert_date(date_to_update)
+                        update_project_dates(project, date_key)
 
+
+    for project in projects_to_analyse:
+        print("3")
+        set_analysed(project)
+
+
+def date_key_exists(date_key):
+    return get_date_key_exists(date_key)
+
+def get_date_from_key(date_key):
+    return get_mongo_date_from_key(date_key)
+
+def update_date(date_to_update, metrics):
+    update_date_mongo(date_to_update, metrics)
+
+def insert_date(date_to_update):
+    insert_date_mongo(date_to_update)
+
+def update_project_dates(project, date_key):
+    update_mongo_project_dates(project, date_key)
+
+def set_analysed(project):
+    proj_col.update_one({"ghtorrent_id":project['ghtorrent_id']}, {"$set":{"analysed":True}})
 

@@ -18,13 +18,10 @@ def insert_into_dates(dates):
     if len(dates) == 0:
         return
     elif "Dates" in db.list_collection_names():
-        dates_collection.insert_many(dates)
+        dates_collection.insert_many(dates.values())
     else:
-        if len(dates) > 1:
-            dates_collection.insert_one(dates.pop())
-            dates_collection.insert_many(dates)
-        else:
-            dates_collection.insert_one(dates.pop())
+        dates_collection.insert_many(dates.values())
+
 
 def insert_into_people_list(person):
     people.append(person)

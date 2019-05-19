@@ -1,18 +1,19 @@
 import pymongo
+import MainDirectory.GetData as gd
 from Database.GHTorrent.Connection import *
 from MainDirectory.PushData import *
-
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["github_builder_db"]
 user_col = mydb["Users"]
 proj_col = mydb["Projects"]
+dates_col = mydb["Dates"]
 
 
 def update_collaboration(person_a, person_b):
     try:
-        user_col.update_one({'_id':person_a['_id']},{'$set': {'collaborators':person_a['collaborators']}})
-        user_col.update_one({'_id':person_b['_id']},{'$set': {'collaborators':person_b['collaborators']}})
+        user_col.update_one({'ghtorrent_id': person_a['ghtorrent_id']},{'$set': {'collaborators':person_a['collaborators']}})
+        user_col.update_one({'ghtorrent_id': person_b['ghtorrent_id']},{'$set': {'collaborators':person_b['collaborators']}})
     except:
         print("Error in pymongo update")
 
@@ -51,8 +52,12 @@ def checkprojdb(ght_id):
 
 
 def get_user_by_id(ght_id):
-    return user_col.find_one({"ghtorrent_id": ght_id})
-
+    user = user_col.find_one({"ghtorrent_id": ght_id})
+    if user is None:
+        user = gd.get_person(ght_id)
+        user_col.insert_one(vars(user))
+        user = user_col.find_one({"ghtorrent_id": ght_id})
+    return user
 
 def check_person_list(ght_id):
     return ght_id in people_ids

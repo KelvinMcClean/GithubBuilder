@@ -20,15 +20,17 @@ def clone_project(owner, project):
 
 
 def get_project_on_date(owner, project, date):
-    global wd
-    wd = "D:/repos/{0}/{1}".format(owner, project)
-    os.chdir(wd)
+    try:
+        global wd
+        wd = "D:/repos/{0}/{1}".format(owner, project)
+        os.chdir(wd)
 
-    cmd = "git rev-list -1 --before=\"{0}\" master".format(date)
-    output = bytes(s.check_output(cmd, shell=True)).decode("utf8")
-    cmd = "git checkout {0}".format(output)
-    s.call(cmd, shell=True)
-
+        cmd = "git rev-list -1 --before=\"{0}\" master".format(date)
+        output = bytes(s.check_output(cmd, shell=True)).decode("utf8")
+        cmd = "git checkout {0}".format(output)
+        s.call(cmd, shell=True)
+    except:
+        print("Code is breaking at dl ")
 
 def examine_project(owner, project, date):
 
@@ -42,6 +44,7 @@ def examine_project(owner, project, date):
 
 
 def get_metrics(owner, project):
+    print("getting metrics")
     payload = {'metricKeys': 'ncloc, complexity', 'component': '{0}::{1}'.format(owner, project)}
     result = requests.get("http://localhost:9000/api/measures/component", params=payload)
     data = result.json()
